@@ -215,7 +215,7 @@ class SafariWebAuth: WebAuth {
             .appendingPathComponent("callback")
     }
 
-    func clearSession(federated: Bool, callback: @escaping (Bool) -> Void) {
+    func clearSession(federated: Bool, callback: @escaping (Result<Void>) -> Void) {
         let logoutURL = federated ? URL(string: "/v2/logout?federated", relativeTo: self.url)! : URL(string: "/v2/logout", relativeTo: self.url)!
         #if swift(>=3.2)
         if #available(iOS 11.0, *), self.authenticationSession {
@@ -225,17 +225,21 @@ class SafariWebAuth: WebAuth {
             let queryItems = components?.queryItems ?? []
             components?.queryItems = queryItems + [returnTo, clientId]
             guard let clearSessionURL = components?.url, let redirectURL = returnTo.value else {
-                return callback(false)
+                return callback(.failure(error: WebAuthError.cancelled))
             }
             let clearSession = SafariAuthenticationSessionCallback(url: clearSessionURL, schemeURL: redirectURL, callback: callback)
             self.storage.store(clearSession)
         } else {
-            let controller = SilentSafariViewController(url: logoutURL) { callback($0) }
+            let controller = SilentSafariViewController(url: logoutURL) { success in
+                callback(success ? .success(result: ()) : .failure(error: WebAuthError.cancelled))
+            }
             logger?.trace(url: logoutURL, source: "Safari")
             self.presenter.present(controller: controller)
         }
         #else
-            let controller = SilentSafariViewController(url: logoutURL) { callback($0) }
+            let controller = SilentSafariViewController(url: logoutURL) { success in
+                callback(success ? .success(result: ()) : .failure(error: WebAuthError.cancelled))
+            }
             logger?.trace(url: logoutURL, source: "Safari")
             self.presenter.present(controller: controller)
         #endif
