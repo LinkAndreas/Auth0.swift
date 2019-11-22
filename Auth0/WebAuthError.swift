@@ -37,6 +37,7 @@ public enum WebAuthError: CustomNSError {
     case noBundleIdentifierFound
     case cannotDismissWebAuthController
     case cancelled
+    case cancelledByIncomingSession
     case userCancelled
     case pkceNotAllowed(String)
     case noNonceProvided
@@ -53,7 +54,7 @@ public enum WebAuthError: CustomNSError {
 
     public var errorCode: Int {
         switch self {
-        case .cancelled, .userCancelled:
+        case .cancelled, .userCancelled, .cancelledByIncomingSession:
             return WebAuthError.cancelledFoundationCode
         default:
             return WebAuthError.genericFoundationCode

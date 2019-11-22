@@ -70,7 +70,7 @@ class AuthSession: NSObject, AuthTransaction {
     }
 
     func cancel() {
-        self.finish(Result.failure(error: WebAuthError.userCancelled))
+        self.finish(Result.failure(error: WebAuthError.cancelledByIncomingSession))
     }
 
     private func has(state: String?, inItems items: [String: String]) -> Bool {

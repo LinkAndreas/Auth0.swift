@@ -91,7 +91,7 @@ class SafariAuthenticationSessionCallback: NSObject, AuthTransaction {
     }
 
     func cancel() {
-        self.callback(.failure(error: WebAuthError.cancelled))
+        self.callback(.failure(error: WebAuthError.cancelledByIncomingSession))
     }
 }
 #endif
