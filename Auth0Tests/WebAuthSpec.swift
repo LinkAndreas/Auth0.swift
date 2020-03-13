@@ -371,7 +371,7 @@ class WebAuthSpec: QuickSpec {
                     auth.clearSession(federated: false) { outcome = $0 }
                     TransactionStore.shared.cancel(TransactionStore.shared.current!)
 
-                    guard case let .failure(error)? = outcome, case WebAuthError.cancelled = error else {
+                    guard case let .failure(error)? = outcome, case WebAuthError.cancelledByIncomingSession = error else {
                         return XCTFail("Unexpected result!")
                     }
 

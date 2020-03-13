@@ -44,6 +44,8 @@ public enum WebAuthError: CustomNSError {
     case missingResponseParam(String)
     case invalidIdTokenNonce
     case missingAccessToken
+    case presentationContextInvalid
+    case presentationContextNotProvided
     case unknownError
 
     static let genericFoundationCode = 1

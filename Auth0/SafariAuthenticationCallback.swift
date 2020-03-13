@@ -70,8 +70,28 @@ class SafariAuthenticationSessionCallback: NSObject, AuthTransaction {
         guard error == nil, url != nil else {
             let authError = error ?? WebAuthError.unknownError
 
-            if #available(iOS 12.0, *), case ASWebAuthenticationSessionError.canceledLogin = authError {
-                self.callback(.failure(error: WebAuthError.userCancelled))
+            if #available(iOS 13.0, *) {
+                switch authError {
+                case ASWebAuthenticationSessionError.canceledLogin:
+                    self.callback(.failure(error: WebAuthError.userCancelled))
+
+                case ASWebAuthenticationSessionError.presentationContextInvalid:
+                    self.callback(.failure(error: WebAuthError.presentationContextInvalid))
+
+                case ASWebAuthenticationSessionError.presentationContextNotProvided:
+                    self.callback(.failure(error: WebAuthError.presentationContextNotProvided))
+
+                default:
+                    self.callback(.failure(error: authError))
+                }
+            } else if #available(iOS 12.0, *) {
+                switch authError {
+                case ASWebAuthenticationSessionError.canceledLogin:
+                    self.callback(.failure(error: WebAuthError.userCancelled))
+
+                default:
+                    self.callback(.failure(error: authError))
+                }
             } else if case SFAuthenticationError.canceledLogin = authError {
                 self.callback(.failure(error: WebAuthError.userCancelled))
             } else {

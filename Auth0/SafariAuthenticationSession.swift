@@ -74,10 +74,25 @@ class SafariAuthenticationSession: AuthSession {
             let webAuthenticationSession = ASWebAuthenticationSession(url: authorizeURL, callbackURLScheme: self.redirectURL.absoluteString) { [unowned self] in
                 guard $1 == nil, let callbackURL = $0 else {
                     let authError = $1 ?? WebAuthError.unknownError
-                    if case ASWebAuthenticationSessionError.canceledLogin = authError {
-                        self.finish(.failure(error: WebAuthError.userCancelled))
-                    } else {
-                        self.finish(.failure(error: authError))
+                    if #available(iOS 13.0, *) {
+                        switch authError {
+                        case ASWebAuthenticationSessionError.canceledLogin:
+                            self.finish(.failure(error: WebAuthError.userCancelled))
+                        case ASWebAuthenticationSessionError.presentationContextInvalid:
+                            self.finish(.failure(error: WebAuthError.presentationContextInvalid))
+
+                        case ASWebAuthenticationSessionError.presentationContextNotProvided:
+                            self.finish(.failure(error: WebAuthError.presentationContextNotProvided))
+
+                        default:
+                            self.finish(.failure(error: authError))
+                        }
+                    } else if #available(iOS 12.0, *) {
+                        if case ASWebAuthenticationSessionError.canceledLogin = authError {
+                            self.finish(.failure(error: WebAuthError.userCancelled))
+                        } else {
+                            self.finish(.failure(error: authError))
+                        }
                     }
                     return TransactionStore.shared.clear()
                 }
