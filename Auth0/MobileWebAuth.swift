@@ -141,7 +141,7 @@ final class MobileWebAuth: BaseWebAuth, WebAuth {
     override func performLogout(logoutURL: URL,
                                 redirectURL: URL,
                                 federated: Bool,
-                                callback: @escaping (Bool) -> Void) -> AuthTransaction? {
+                                callback: @escaping (Result<Void>) -> Void) -> AuthTransaction? {
         if #available(iOS 11.0, *), self.authenticationSession {
             if #available(iOS 12.0, *) {
                 return super.performLogout(logoutURL: logoutURL,
@@ -164,7 +164,10 @@ final class MobileWebAuth: BaseWebAuth, WebAuth {
             urlComponents.query = nil
         }
         let url = urlComponents.url!
-        let controller = SilentSafariViewController(url: url) { callback($0) }
+        let controller = SilentSafariViewController(url: url) {
+            callback($0 ? .failure(WebAuthError.cancelled) : .success(()))
+        }
+
         self.presenter.present(controller: controller)
         self.logger?.trace(url: url, source: String(describing: "Safari"))
         return nil
@@ -199,7 +202,6 @@ final class MobileWebAuth: BaseWebAuth, WebAuth {
     }
 
 }
-
 
 public protocol AuthResumable {
 
@@ -268,11 +270,35 @@ final class SafariServicesSession: SessionTransaction {
                                               callbackURLScheme: self.redirectURL.absoluteString) { [unowned self] in
             guard $1 == nil, let callbackURL = $0 else {
                 let authError = $1 ?? WebAuthError.unknownError
-                if case SFAuthenticationError.canceledLogin = authError {
+
+                if #available(iOS 13.0, *) {
+                    switch authError {
+                    case ASWebAuthenticationSessionError.canceledLogin:
+                        self.callback(.failure(WebAuthError.userCancelled))
+
+                    case ASWebAuthenticationSessionError.presentationContextInvalid:
+                        self.callback(.failure(WebAuthError.presentationContextInvalid))
+
+                    case ASWebAuthenticationSessionError.presentationContextNotProvided:
+                        self.callback(.failure(WebAuthError.presentationContextNotProvided))
+
+                    default:
+                        self.callback(.failure(authError))
+                    }
+                } else if #available(iOS 12.0, *) {
+                    switch authError {
+                    case ASWebAuthenticationSessionError.canceledLogin:
+                        self.callback(.failure(WebAuthError.userCancelled))
+
+                    default:
+                        self.callback(.failure(authError))
+                    }
+                } else if case SFAuthenticationError.canceledLogin = authError {
                     self.callback(.failure(WebAuthError.userCancelled))
                 } else {
                     self.callback(.failure(authError))
                 }
+
                 return TransactionStore.shared.clear()
             }
             _ = TransactionStore.shared.resume(callbackURL)
@@ -280,18 +306,17 @@ final class SafariServicesSession: SessionTransaction {
 
          _ = authSession?.start()
     }
-
 }
 
 @available(iOS 11.0, *)
 final class SafariServicesSessionCallback: SessionCallbackTransaction {
 
-    init(url: URL, schemeURL: URL, callback: @escaping (Bool) -> Void) {
+    init(url: URL, schemeURL: URL, callback: @escaping (Result<Void>) -> Void) {
         super.init(callback: callback)
 
         let authSession = SFAuthenticationSession(url: url,
-                                                  callbackURLScheme: schemeURL.absoluteString) { [unowned self] url, _ in
-            self.callback(url != nil)
+                                                  callbackURLScheme: schemeURL.absoluteString) { [unowned self] url, error in
+            self.handleResult(url: url, error: error, callback: callback)
             TransactionStore.shared.clear()
         }
 
@@ -299,6 +324,43 @@ final class SafariServicesSessionCallback: SessionCallbackTransaction {
         authSession.start()
     }
 
+    private func handleResult(url: URL?, error: Error?, callback: @escaping (Result<Void>) -> Void) {
+        guard error == nil, url != nil else {
+            let authError = error ?? WebAuthError.unknownError
+
+            if #available(iOS 13.0, *) {
+                switch authError {
+                case ASWebAuthenticationSessionError.canceledLogin:
+                    self.callback(.failure(WebAuthError.userCancelled))
+
+                case ASWebAuthenticationSessionError.presentationContextInvalid:
+                    self.callback(.failure(WebAuthError.presentationContextInvalid))
+
+                case ASWebAuthenticationSessionError.presentationContextNotProvided:
+                    self.callback(.failure(WebAuthError.presentationContextNotProvided))
+
+                default:
+                    self.callback(.failure(authError))
+                }
+            } else if #available(iOS 12.0, *) {
+                switch authError {
+                case ASWebAuthenticationSessionError.canceledLogin:
+                    self.callback(.failure(WebAuthError.userCancelled))
+
+                default:
+                    self.callback(.failure(authError))
+                }
+            } else if case SFAuthenticationError.canceledLogin = authError {
+                self.callback(.failure(WebAuthError.userCancelled))
+            } else {
+                self.callback(.failure(authError))
+            }
+
+            return
+        }
+
+        self.callback(.success(()))
+    }
 }
 
 @available(iOS 11.0, *)

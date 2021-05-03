@@ -26,12 +26,12 @@ import AuthenticationServices
 @available(iOS 12.0, macOS 10.15, *)
 final class AuthenticationServicesSessionCallback: SessionCallbackTransaction {
 
-    init(url: URL, schemeURL: URL, callback: @escaping (Bool) -> Void) {
+    init(url: URL, schemeURL: URL, callback: @escaping (Result<Void>) -> Void) {
         super.init(callback: callback)
 
         let authSession = ASWebAuthenticationSession(url: url,
-                                                     callbackURLScheme: schemeURL.scheme) { [weak self] url, _ in
-            self?.callback(url != nil)
+                                                     callbackURLScheme: schemeURL.scheme) { [weak self] url, error in
+            self?.handleResult(url: url, error: error, callback: callback)
             TransactionStore.shared.clear()
         }
 
@@ -45,5 +45,38 @@ final class AuthenticationServicesSessionCallback: SessionCallbackTransaction {
         authSession.start()
     }
 
+    private func handleResult(url: URL?, error: Error?, callback: @escaping (Result<Void>) -> Void) {
+        guard error == nil, url != nil else {
+            let authError = error ?? WebAuthError.unknownError
+
+            if #available(iOS 13.0, *) {
+                switch authError {
+                case ASWebAuthenticationSessionError.canceledLogin:
+                    self.callback(.failure(WebAuthError.userCancelled))
+
+                case ASWebAuthenticationSessionError.presentationContextInvalid:
+                    self.callback(.failure(WebAuthError.presentationContextInvalid))
+
+                case ASWebAuthenticationSessionError.presentationContextNotProvided:
+                    self.callback(.failure(WebAuthError.presentationContextNotProvided))
+
+                default:
+                    self.callback(.failure(authError))
+                }
+            } else {
+                switch authError {
+                case ASWebAuthenticationSessionError.canceledLogin:
+                    self.callback(.failure(WebAuthError.userCancelled))
+
+                default:
+                    self.callback(.failure(authError))
+                }
+            }
+
+            return
+        }
+
+        self.callback(.success(()))
+    }
 }
 #endif

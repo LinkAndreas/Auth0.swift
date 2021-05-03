@@ -263,6 +263,6 @@ public protocol WebAuthenticatable: Trackable, Loggable {
      - parameter federated: Bool to remove the IdP session
      - parameter callback: callback called with bool outcome of the call
      */
-    func clearSession(federated: Bool, callback: @escaping (Bool) -> Void)
+    func clearSession(federated: Bool, callback: @escaping (Result<Void>) -> Void)
 }
 #endif

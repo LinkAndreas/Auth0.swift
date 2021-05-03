@@ -27,20 +27,19 @@ class SessionCallbackTransaction: NSObject, AuthTransaction {
 
     var state: String?
     var authSession: AuthSession?
-    let callback: (Bool) -> Void
+    let callback: (Result<Void>) -> Void
 
-    init(callback: @escaping (Bool) -> Void) {
+    init(callback: @escaping (Result<Void>) -> Void) {
         self.callback = callback
     }
 
     func cancel() {
-        self.callback(false)
+        self.callback(.failure(WebAuthError.cancelledByIncomingSession))
     }
 
     func handleUrl(_ url: URL) -> Bool {
-        self.callback(true)
+        self.callback(.success(()))
         return true
     }
-
 }
 #endif

@@ -209,7 +209,7 @@ class BaseWebAuth: WebAuthenticatable {
         return nil
     }
 
-    func clearSession(federated: Bool, callback: @escaping (Bool) -> Void) {
+    func clearSession(federated: Bool, callback: @escaping (Result<Void>) -> Void) {
         let endpoint = federated ?
             URL(string: "/v2/logout?federated", relativeTo: self.url)! :
             URL(string: "/v2/logout", relativeTo: self.url)!
@@ -221,7 +221,7 @@ class BaseWebAuth: WebAuthenticatable {
         components?.queryItems = queryItems + [returnTo, clientId]
 
         guard let logoutURL = components?.url, let redirectURL = self.redirectURL else {
-            return callback(false)
+            return callback(.failure(WebAuthError.cancelled))
         }
 
         // performLogout must handle the callback
@@ -236,7 +236,7 @@ class BaseWebAuth: WebAuthenticatable {
     func performLogout(logoutURL: URL,
                        redirectURL: URL,
                        federated: Bool,
-                       callback: @escaping (Bool) -> Void) -> AuthTransaction? {
+                       callback: @escaping (Result<Void>) -> Void) -> AuthTransaction? {
         #if canImport(AuthenticationServices)
         if #available(iOS 12.0, macOS 10.15, *) {
             return AuthenticationServicesSessionCallback(url: logoutURL,
@@ -244,7 +244,7 @@ class BaseWebAuth: WebAuthenticatable {
                                                          callback: callback)
         }
         #endif
-        callback(false)
+        callback(.failure(WebAuthError.cancelled))
         return nil
     }
 
