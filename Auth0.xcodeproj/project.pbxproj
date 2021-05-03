@@ -95,7 +95,6 @@
 		5C41F6D7244F975A00252548 /* TransactionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FCAB1751D0900CF00331C84 /* TransactionStore.swift */; };
 		5C41F6D8244F976200252548 /* WebAuthenticatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3965C11CF67CF000CDE7C0 /* WebAuthenticatable.swift */; };
 		5C41F6D9244F977900252548 /* WebAuthError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD255B91D14F70B00387ECB /* WebAuthError.swift */; };
-		5C41F6DA244F978200252548 /* _ObjectiveWebAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF2866E1D8A417B00314B72 /* _ObjectiveWebAuth.swift */; };
 		5C41F6DB244F97AB00252548 /* BaseWebAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FAE9C901D8878D400A871CE /* BaseWebAuth.swift */; };
 		5C41F6DD244F982700252548 /* DesktopWebAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C41F6DC244F982700252548 /* DesktopWebAuth.swift */; };
 		5C41F6DE244FA0E400252548 /* ResponseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD4A9CD1DEC6EFA00D6D7AE /* ResponseType.swift */; };
@@ -349,7 +348,6 @@
 		5FE686A21D1877C10075874C /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5FE686A01D1877C10075874C /* Auth0.plist */; };
 		5FE686AA1D1894AA0075874C /* TelemetrySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE686A91D1894AA0075874C /* TelemetrySpec.swift */; };
 		5FE686AB1D1894AA0075874C /* TelemetrySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE686A91D1894AA0075874C /* TelemetrySpec.swift */; };
-		5FF2866F1D8A417B00314B72 /* _ObjectiveWebAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF2866E1D8A417B00314B72 /* _ObjectiveWebAuth.swift */; };
 		5FF465BC1CE2AC4500F7ED8C /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF465BB1CE2AC4500F7ED8C /* Management.swift */; };
 		5FF465BD1CE2AC4500F7ED8C /* Management.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF465BB1CE2AC4500F7ED8C /* Management.swift */; };
 		970BC36B25C27095007A7745 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970BC36A25C27095007A7745 /* Challenge.swift */; };
@@ -655,7 +653,6 @@
 		5FE2F8C51CD1522F003628F4 /* ProfileSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileSpec.swift; path = Auth0Tests/ProfileSpec.swift; sourceTree = SOURCE_ROOT; };
 		5FE686A01D1877C10075874C /* Auth0.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Auth0.plist; sourceTree = "<group>"; };
 		5FE686A91D1894AA0075874C /* TelemetrySpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetrySpec.swift; sourceTree = "<group>"; };
-		5FF2866E1D8A417B00314B72 /* _ObjectiveWebAuth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = _ObjectiveWebAuth.swift; path = Auth0/_ObjectiveWebAuth.swift; sourceTree = SOURCE_ROOT; };
 		5FF346491CEFEC04000799DE /* Auth0Tests.iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Auth0Tests.iOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		5FF3464A1CEFEC04000799DE /* Auth0Tests.OSX-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Auth0Tests.OSX-Bridging-Header.h"; sourceTree = "<group>"; };
 		5FF465BB1CE2AC4500F7ED8C /* Management.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Management.swift; path = Auth0/Management.swift; sourceTree = SOURCE_ROOT; };
@@ -1001,7 +998,6 @@
 		5F3965C01CF679B500CDE7C0 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				5FCAB1771D0901BA00331C84 /* ObjectiveC */,
 				5C41F6AF244DCC1100252548 /* Platforms */,
 				5B6269E91E3F9E5200305093 /* AuthProvider.swift */,
 				5C41F6AC244DCB6D00252548 /* AuthCancelable.swift */,
@@ -1148,15 +1144,6 @@
 				5C4F550423C8FADE00C89615 /* JWTAlgorithm.swift */,
 			);
 			name = Crypto;
-			sourceTree = "<group>";
-		};
-		5FCAB1771D0901BA00331C84 /* ObjectiveC */ = {
-			isa = PBXGroup;
-			children = (
-				5FF2866E1D8A417B00314B72 /* _ObjectiveWebAuth.swift */,
-			);
-			name = ObjectiveC;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		5FCCC30F1CF4D4D000901E2E /* ObjectiveC */ = {
@@ -1852,7 +1839,6 @@
 				5FCAB1711D09005A00331C84 /* NSURLComponents+OAuth2.swift in Sources */,
 				5B6269EA1E3F9E5200305093 /* AuthProvider.swift in Sources */,
 				5FDE876D1D8A424700EA27DC /* Handlers.swift in Sources */,
-				5FF2866F1D8A417B00314B72 /* _ObjectiveWebAuth.swift in Sources */,
 				5FE2F8BB1CD0EAAD003628F4 /* Response.swift in Sources */,
 				970BC36B25C27095007A7745 /* Challenge.swift in Sources */,
 				5FCCC31C1CF51DF300901E2E /* _ObjectiveManagementAPI.swift in Sources */,
@@ -1946,7 +1932,6 @@
 				5C41F6C4244F967000252548 /* AuthCancelable.swift in Sources */,
 				5FD255B81D14F00900387ECB /* Auth0Error.swift in Sources */,
 				5C41F6D0244F971700252548 /* JWK+RSA.swift in Sources */,
-				5C41F6DA244F978200252548 /* _ObjectiveWebAuth.swift in Sources */,
 				5C41F6D6244F975200252548 /* SessionTransaction.swift in Sources */,
 				5C41F6C7244F968B00252548 /* AuthTransaction.swift in Sources */,
 				5FD255B51D14DD2600387ECB /* ManagementError.swift in Sources */,

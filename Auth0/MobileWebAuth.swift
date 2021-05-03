@@ -200,22 +200,6 @@ final class MobileWebAuth: BaseWebAuth, WebAuth {
 
 }
 
-public extension _ObjectiveOAuth2 {
-
-    /**
-     Resumes the current Auth session (if any).
-
-     - parameter url:     url received by iOS application in AppDelegate
-     - parameter options: dictionary with launch options received by iOS application in AppDelegate
-
-     - returns: if the url was handled by an on going session or not.
-     */
-    @objc(resumeAuthWithURL:options:)
-    static func resume(_ url: URL, options: [A0URLOptionsKey: Any]) -> Bool {
-        return resumeAuth(url, options: options)
-    }
-
-}
 
 public protocol AuthResumable {
 
